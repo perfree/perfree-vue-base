@@ -1,13 +1,21 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import commonjs from 'vite-plugin-commonjs'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), commonjs()],
+  server: {
+    port: 4200,
+    host: '0.0.0.0',
+  },
+  base: "/",
   build: {
+    commonjsOptions: {
+      transformMixedEsModules: true
+    },
     lib: {
       entry: {index: "index.html", home: "src/modules/home/index.js"},
+      formats: ["es"],
       name: "Perfree"
     },
     rollupOptions: {
@@ -22,11 +30,10 @@ export default defineConfig({
         chunkFileNames: (chunkInfo)=> {
           if (chunkInfo.facadeModuleId) {
             const match = chunkInfo.facadeModuleId.match(/\/src\/modules\/([^/]+)/);
-            const moduleName = match ? match[1] : null;
             if (chunkInfo.facadeModuleId.endsWith(".vue")){
-              return `${moduleName}/[name]-view.js`
+              return match? `${match[1]}/[name]-view.js` : `[name]-view.js`
             }
-            return `${moduleName}/[name].js`
+            return match? `${match[1]}/[name].js` : `[name].js`
           }
 
           return '[name]/[name].js'

@@ -1,6 +1,7 @@
 const modules = import.meta.glob('./view/*.vue');
 
 export default function(menusRouter, moduleName) {
+  let router = [];
     // 动态路由
     for (let item of menusRouter)
       router.push({
@@ -10,7 +11,6 @@ export default function(menusRouter, moduleName) {
         meta: {
           moduleName: moduleName,
           name: item.name,
-          resource: item.resource ? item.resource : []
         }
       });
   

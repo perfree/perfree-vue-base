@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "loadjs": "^4.2.0",
+    "vite-plugin-commonjs": "^0.10.1",
     "vue": "^3.4.29",
     "vue-router": "^4.4.0"
   },
