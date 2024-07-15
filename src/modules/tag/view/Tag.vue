@@ -1,3 +1,3 @@
 <template>
-  <div>tag页面</div>
+  <div>tag</div>
 </template>

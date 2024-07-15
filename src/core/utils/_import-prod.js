@@ -5,4 +5,4 @@
  * @returns {Promise<unknown>}
  */
 export default (type, name) =>
-    import(`/${name}/${name}.js`)
+    import(`/modules/${name}/${name}.js`)

@@ -3,13 +3,14 @@ import vue from '@vitejs/plugin-vue'
 import progress from 'vite-plugin-progress'
 import fs from 'fs'
 import path from 'path'
+import ElementPlus from "element-plus";
 
 /**
  * 扫描生成入口文件
  * @returns {{index: string}}
  */
 function scanEntry () {
-  let result = {index: "index.html"};
+  let result = {core: "index.html"};
   const modulesDir = path.resolve(__dirname, 'src/modules');
   fs.readdirSync(modulesDir).forEach(moduleName => {
     const modulePath = path.join(modulesDir, moduleName, 'index.js');
@@ -28,7 +29,7 @@ export default defineConfig({
     enabled: true,
   },
   server: {
-    port: 4200,
+    port: 4201,
     host: '0.0.0.0',
   },
   base: "/",
@@ -45,22 +46,39 @@ export default defineConfig({
       name: "Perfree"
     },
     rollupOptions: {
+    /*  external: [
+        "vue",
+        "vue-router",
+          "ElementPlus"
+      ],*/
       output: {
+        assetFileNames: (assetInfo) => {
+          return 'assets/[name][extname]';
+        },
         entryFileNames: (chunkInfo)=> {
-          return '[name]/[name].js'
+          return 'modules/[name]/[name].js'
         },
         chunkFileNames: (chunkInfo)=> {
           if (chunkInfo.facadeModuleId) {
+            if (chunkInfo.facadeModuleId.indexOf("_import-prod.js") >= 0) {
+              return 'lib/[name].js'
+            }
             const match = chunkInfo.facadeModuleId.match(/\/src\/modules\/([^/]+)/);
             if (chunkInfo.facadeModuleId.endsWith(".vue")){
-              return match? `${match[1]}/[name]-view.js` : `[name]-view.js`
+              return match? `modules/${match[1]}/[name]-view.js` : `[name]-view.js`
             }
-            return match? `${match[1]}/[name].js` : `[name].js`
+            return match? `modules/${match[1]}/[name].js` : `[name].js`
           }
 
-          return '[name]/[name].js'
+          return 'lib/[name].js'
         },
+      /*  globals: {
+          vue: "Vue",
+          "vue-router": "VueRouter",
+          "ElementPlus": "ElementPlus"
+        }*/
       },
+
     }
   }
 })
