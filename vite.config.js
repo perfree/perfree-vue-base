@@ -1,8 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import progress from 'vite-plugin-progress'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), progress()],
+  optimizeDeps: {
+    enabled: true,
+  },
   server: {
     port: 4200,
     host: '0.0.0.0',
@@ -14,9 +18,7 @@ export default defineConfig({
     }
   },
   build: {
-    commonjsOptions: {
-      transformMixedEsModules: true
-    },
+    modulePreload: false,
     lib: {
       entry: {index: "index.html", home: "src/modules/home/index.js", tag: "src/modules/tag/index.js"},
       formats: ["es"],
@@ -42,16 +44,16 @@ export default defineConfig({
 
           return '[name]/[name].js'
         },
-        manualChunks:(id)=>{
+       /* manualChunks:(id)=>{
           if(id.includes("node_modules")){
             return "vendor/" + id.toString().split('node_modules/')[1].split("/")[0].toString();
           }
-        }
+        }*/
        /* globals: {
           vue: "Vue",
           "vue-router": "VueRouter",
         }*/
-      }
+      },
     }
   }
 })

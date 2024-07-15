@@ -1,5 +1,3 @@
-import loadjs from 'loadjs';
-
 /**
  * 导入生产环境js
  * @param type
