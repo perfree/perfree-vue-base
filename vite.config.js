@@ -1,28 +1,32 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import commonjs from 'vite-plugin-commonjs'
 
 export default defineConfig({
-  plugins: [vue(), commonjs()],
+  plugins: [vue()],
   server: {
     port: 4200,
     host: '0.0.0.0',
   },
   base: "/",
+  define: {
+    process: {
+      env: {}
+    }
+  },
   build: {
     commonjsOptions: {
       transformMixedEsModules: true
     },
     lib: {
-      entry: {index: "index.html", home: "src/modules/home/index.js"},
+      entry: {index: "index.html", home: "src/modules/home/index.js", tag: "src/modules/tag/index.js"},
       formats: ["es"],
       name: "Perfree"
     },
     rollupOptions: {
-      external: [
+      /*external: [
         "vue",
         "vue-router",
-      ],
+      ],*/
       output: {
         entryFileNames: (chunkInfo)=> {
           return '[name]/[name].js'
@@ -38,10 +42,15 @@ export default defineConfig({
 
           return '[name]/[name].js'
         },
-        globals: {
+        manualChunks:(id)=>{
+          if(id.includes("node_modules")){
+            return "vendor/" + id.toString().split('node_modules/')[1].split("/")[0].toString();
+          }
+        }
+       /* globals: {
           vue: "Vue",
           "vue-router": "VueRouter",
-        }
+        }*/
       }
     }
   }

@@ -7,7 +7,4 @@ import loadjs from 'loadjs';
  * @returns {Promise<unknown>}
  */
 export default (type, name) =>
-    new Promise((resolve, reject) => {
-        loadjs(`/static/admin/${type}/${name}/${name}.js`, {
-        });
-    });
+    import(`/${name}/${name}.js`)
