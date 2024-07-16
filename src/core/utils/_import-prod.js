@@ -4,5 +4,9 @@
  * @param name
  * @returns {Promise<unknown>}
  */
-export default (type, name) =>
-    import(`/modules/${name}/${name}.js`)
+
+const modules = import.meta.glob('../../modules/**/index.js');
+export default (type, name) => {
+    console.log(modules)
+    return  import(`/modules/${name}/index.js`)
+}

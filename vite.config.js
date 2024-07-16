@@ -40,11 +40,11 @@ export default defineConfig({
   },
   build: {
     modulePreload: false,
-    lib: {
+   /* lib: {
       entry: entry,
       formats: ["es"],
       name: "Perfree"
-    },
+    },*/
     rollupOptions: {
     /*  external: [
         "vue",
