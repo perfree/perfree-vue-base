@@ -1,30 +1,42 @@
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import progress from 'vite-plugin-progress'
-import fs from 'fs'
-import path from 'path'
-import ElementPlus from "element-plus";
+import {viteExternalsPlugin} from "vite-plugin-externals";
+import {createHtmlPlugin} from "vite-plugin-html";
+import {viteStaticCopy} from 'vite-plugin-static-copy';
 
-/**
- * 扫描生成入口文件
- * @returns {{index: string}}
- */
-function scanEntry () {
-  let result = {core: "index.html"};
-  const modulesDir = path.resolve(__dirname, 'src/modules');
-  fs.readdirSync(modulesDir).forEach(moduleName => {
-    const modulePath = path.join(modulesDir, moduleName, 'index.js');
-    if (fs.existsSync(modulePath)) {
-      result[moduleName] = modulePath;
-    }
-  });
-  return result;
-}
-
-// 定义入口参数
-const entry = scanEntry();
 export default defineConfig({
-  plugins: [vue(), progress()],
+  plugins: [
+      vue(),
+    viteStaticCopy({
+        targets: [
+          { src: './node_modules/vue/dist/vue.global.prod.js', dest: 'assets/vue' },
+          { src: './node_modules/vue-router/dist/vue-router.global.prod.js', dest: 'assets/vue-router' },
+          // { src: './node_modules/axios/dist/axios.min.js', dest: 'assets/axios' },
+          { src: './node_modules/element-plus/dist', dest: 'assets/element-plus' }
+        ]
+      }),
+      createHtmlPlugin({
+        minify: true,
+        template: 'index.html',
+        inject: {
+          data: {
+            title: 'index',
+            injectScript: ` 
+                <script src="/assets/vue/vue.global.prod.js"></script>
+                <script src="/assets/vue-router/vue-router.global.prod.js"></script>
+                <script src="/assets/element-plus/dist/index.full.min.js"></script>
+            `,
+          },
+        },
+      }),
+      viteExternalsPlugin({
+        vue: 'Vue',
+        "vue-router": "VueRouter",
+        "element-plus": "ElementPlus",
+      }),
+    progress()
+  ],
   optimizeDeps: {
     enabled: true,
   },
@@ -39,44 +51,16 @@ export default defineConfig({
     }
   },
   build: {
-    modulePreload: false,
-   /* lib: {
-      entry: entry,
-      formats: ["es"],
-      name: "Perfree"
-    },*/
+    outDir: "dist",
+    modulePreload: true,
     rollupOptions: {
-    /*  external: [
-        "vue",
-        "vue-router",
-          "ElementPlus"
-      ],*/
       output: {
         assetFileNames: (assetInfo) => {
-          return 'assets/[name][extname]';
-        },
-        entryFileNames: (chunkInfo)=> {
-          return 'modules/[name]/[name].js'
+          return 'assets/[name]/[name][extname]';
         },
         chunkFileNames: (chunkInfo)=> {
-          if (chunkInfo.facadeModuleId) {
-            if (chunkInfo.facadeModuleId.indexOf("_import-prod.js") >= 0) {
-              return 'lib/[name].js'
-            }
-            const match = chunkInfo.facadeModuleId.match(/\/src\/modules\/([^/]+)/);
-            if (chunkInfo.facadeModuleId.endsWith(".vue")){
-              return match? `modules/${match[1]}/[name]-view.js` : `[name]-view.js`
-            }
-            return match? `modules/${match[1]}/[name].js` : `[name].js`
-          }
-
-          return 'lib/[name].js'
+          return 'assets/[name]/[name].js'
         },
-      /*  globals: {
-          vue: "Vue",
-          "vue-router": "VueRouter",
-          "ElementPlus": "ElementPlus"
-        }*/
       },
 
     }

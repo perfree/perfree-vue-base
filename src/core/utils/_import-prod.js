@@ -5,8 +5,9 @@
  * @returns {Promise<unknown>}
  */
 
-const modules = import.meta.glob('../../modules/**/index.js');
 export default (type, name) => {
-    console.log(modules)
+   /* if (type === "1") {
+        return import(`http://localhost:5173/src/modules/demo02/index.js`)
+    }*/
     return  import(`/modules/${name}/index.js`)
 }

@@ -8,9 +8,11 @@
   <el-button type="danger">Danger</el-button>
   <br>
   <router-link to="/">前往根目录</router-link><br>
+  <router-link to="/coreIndex">前往核心模块coreIndex页面</router-link><br>
   <router-link to="/home">前往home模块home页面</router-link><br>
   <router-link to="/test">前往home模块test页面</router-link><br>
   <router-link to="/tag">前往tag模块tag页面</router-link><br>
+  <router-link to="/demo02">前往demo02模块demo02页面</router-link><br>
 
   <div>--------子模块---------</div>
   <router-view></router-view>
